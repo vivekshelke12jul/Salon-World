@@ -2,7 +2,7 @@ spring.application.name=serviceOfferingMicroservice
 
 
 server.port=8084
-
+ 
 spring.datasource.url=jdbc:postgresql://localhost:5432/salon_world_serviceoffering_db
 spring.datasource.username=postgres
 spring.datasource.password=vivek
