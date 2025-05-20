@@ -1,8 +1,0 @@
-
-do later:
-
-    - [ ] remove unneccesary dto classes
-    - [ ] remove stripe if it is not needed
-    - [ ] study razorpay
-    - [ ] study email notification
-    - [ ] study mobile notification
