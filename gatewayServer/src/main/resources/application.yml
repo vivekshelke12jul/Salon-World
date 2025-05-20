@@ -1,0 +1,63 @@
+server:
+  port: 8000
+
+
+spring:
+  application:
+    name: gatewayServer
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: SALON
+          uri: "lb://SALON"
+          predicates:
+            - Path= /salon/**, /api/salon/**, /api/admin/salon/**
+
+        - id: USER
+          uri: "lb://USER"
+          predicates:
+            - Path= /auth/**, /api/admin/user/**, /api/user/**, /user/**
+
+        - id: SERVICE-OFFERING
+          uri:
+            "lb://SERVICE-OFFERING"
+          predicates:
+            - Path= /api/service-offering/**
+
+        - id: CATEGORY
+          uri:
+            "lb://CATEGORY"
+          predicates:
+            - Path= /api/category/**
+
+        - id: BOOKING
+          uri:
+            "lb://BOOKING"
+          predicates:
+            - Path= /api/booking/**
+
+        - id: PAYMENT
+          uri:
+            "lb://PAYMENT"
+          predicates:
+            - Path= /api/payment/**
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
