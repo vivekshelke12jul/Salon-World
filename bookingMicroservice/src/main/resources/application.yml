@@ -1,0 +1,33 @@
+server:
+  port: 8005
+
+
+spring:
+  application:
+    name: bookingMicroservice
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/salon_world_booking_db
+    username: postgres
+    password: vivek
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+logging:
+  level:
+    org:
+     springframework:
+      security: DEBUG
+

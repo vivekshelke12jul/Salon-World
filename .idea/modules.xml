@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/paymentMicroservice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/paymentMicroservice.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/salonMicroservice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/salonMicroservice.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/serviceOfferingMicroservice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/serviceOfferingMicroservice.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/userMicroservice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/userMicroservice.main.iml" />
     </modules>
   </component>
 </project>
