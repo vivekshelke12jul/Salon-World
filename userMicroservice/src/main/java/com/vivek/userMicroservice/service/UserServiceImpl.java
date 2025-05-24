@@ -1,6 +1,7 @@
 package com.vivek.userMicroservice.service;
 
 import com.vivek.userMicroservice.model.User;
+import com.vivek.userMicroservice.payload.dto.KeycloakUserinfo;
 import com.vivek.userMicroservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private KeycloakService keycloakUserService;
 
     @Override
     public User saveUser(User user) {
@@ -35,6 +39,18 @@ public class UserServiceImpl implements UserService {
                         new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found")
                 );
     }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User findUserbyJwt(String jwt) throws Exception {
+        KeycloakUserinfo userInfo = keycloakUserService.fetchUserProfileByJwt(jwt);
+        return findUserByEmail(userInfo.getEmail());
+    }
+
 
     @Override
     public List<User> findAllUsers() {

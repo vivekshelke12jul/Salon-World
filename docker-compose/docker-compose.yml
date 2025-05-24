@@ -1,0 +1,293 @@
+services:
+
+  eurekaserver:
+    image: "vivek12jul/salon_world_eureka_server"
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    container_name: eurekaserver
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - salon_world_network
+
+  userdb:
+    image: postgres:16
+    container_name: userdb
+    ports:
+      - 54321:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salon_world_userdb
+    networks:
+      - salon_world_network
+
+  salondb:
+    image: postgres:16
+    container_name: salondb
+    ports:
+      - 54322:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salon_world_salondb
+    networks:
+      - salon_world_network
+
+  categorydb:
+    image: postgres:16
+    container_name: categorydb
+    ports:
+      - 54323:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salon_world_categorydb
+    networks:
+      - salon_world_network
+
+  serviceofferingdb:
+    image: postgres:16
+    container_name: serviceofferingdb
+    ports:
+      - 54324:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salon_world_serviceofferingdb
+    networks:
+      - salon_world_network
+
+  bookingdb:
+    image: postgres:16
+    container_name: bookingdb
+    ports:
+      - 54325:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salon_world_bookingdb
+    networks:
+      - salon_world_network
+
+  paymentdb:
+    image: postgres:16
+    container_name: paymentdb
+    ports:
+      - 54326:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: salon_world_paymentdb
+    networks:
+      - salon_world_network
+
+  user:
+    image: "vivek12jul/salon_world_user_microservice"
+    ports:
+      - "8081:8081"
+    container_name: user
+    healthcheck:
+      test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      userdb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: "userMicroservice"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://userdb:5432/salon_world_userdb"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+    networks:
+      - salon_world_network
+
+  salon:
+    image: "vivek12jul/salon_world_salon_microservice"
+    ports:
+      - "8082:8082"
+    container_name: salon
+    healthcheck:
+      test: "curl --fail --silent localhost:8082/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      salondb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: "salonMicroservice"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://salondb:5432/salon_world_salondb"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+    networks:
+      - salon_world_network
+
+  category:
+    image: "vivek12jul/salon_world_category_microservice"
+    ports:
+      - "8083:8083"
+    container_name: category
+    healthcheck:
+      test: "curl --fail --silent localhost:8083/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      categorydb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: "categoryMicroservice"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://categorydb:5432/salon_world_categorydb"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+    networks:
+      - salon_world_network
+
+  booking:
+    image: "vivek12jul/salon_world_booking_microservice"
+    ports:
+      - "8084:8084"
+    container_name: booking
+    healthcheck:
+      test: "curl --fail --silent localhost:8084/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      bookingdb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: "bookingMicroservice"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://bookingdb:5432/salon_world_bookingdb"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+    networks:
+      - salon_world_network
+
+  service_offering:
+    image: "vivek12jul/salon_world_service_offering_microservice"
+    ports:
+      - "8085:8085"
+    container_name: service_offering
+    healthcheck:
+      test: "curl --fail --silent localhost:8085/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      serviceofferingdb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: "serviceOfferingMicroservice"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://serviceofferingdb:5432/salon_world_serviceofferingdb"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+    networks:
+      - salon_world_network
+
+  payment:
+    image: "vivek12jul/salon_world_payment_microservice"
+    ports:
+      - "8086:8086"
+    container_name: payment
+    healthcheck:
+      test: "curl --fail --silent localhost:8086/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      paymentdb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: "paymentMicroservice"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://paymentdb:5432/salon_world_paymentdb"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+    networks:
+      - salon_world_network
+
+networks:
+  salon_world_network:
+    driver: "bridge"
