@@ -12,39 +12,44 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: SALON
-          uri: "lb://SALON"
+        - id: SALONMICROSERVICE
+          uri: "lb://SALONMICROSERVICE"
           predicates:
             - Path= /salon/**, /api/salon/**, /api/admin/salon/**
 
-        - id: USER
-          uri: "lb://USER"
+        - id: USERMICROSERVICE
+          uri: "lb://USERMICROSERVICE"
           predicates:
             - Path= /auth/**, /api/admin/user/**, /api/user/**, /user/**
 
-        - id: SERVICE-OFFERING
+        - id: SERVICEOFFERINGMICROSERVICE
           uri:
-            "lb://SERVICE-OFFERING"
+            "lb://SERVICEOFFERINGMICROSERVICE"
           predicates:
             - Path= /api/service-offering/**
 
-        - id: CATEGORY
+        - id: CATEGORYMICROSERVICE
           uri:
-            "lb://CATEGORY"
+            "lb://CATEGORYMICROSERVICE"
           predicates:
             - Path= /api/category/**
 
-        - id: BOOKING
+        - id: BOOKINGMICROSERVICE
           uri:
-            "lb://BOOKING"
+            "lb://BOOKINGMICROSERVICE"
           predicates:
             - Path= /api/booking/**
 
-        - id: PAYMENT
+        - id: PAYMENTMICROSERVICE
           uri:
-            "lb://PAYMENT"
+            "lb://PAYMENTMICROSERVICE"
           predicates:
             - Path= /api/payment/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
 
 eureka:
   instance:

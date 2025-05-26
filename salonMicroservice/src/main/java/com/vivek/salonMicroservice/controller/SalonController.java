@@ -14,18 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/salon")
-public class salonController {
+@RequestMapping("/api/salon")
+public class SalonController {
 
     @Autowired
     private SalonService salonService;
 
-    @PostMapping
-    public ResponseEntity<SalonDTO> createSalon(
-            @RequestBody SalonDTO salon,
-            @RequestBody UserDTO user
-    ) throws Exception {
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
 
+    @PostMapping
+    public ResponseEntity<SalonDTO> createSalon(@RequestBody SalonDTO salon) throws Exception {
+
+        UserDTO user = new UserDTO();
+        user.setId(1);
         Salon createdSalon = salonService.createSalon(salon,user);
         SalonDTO salonDTO= SalonMapper.mapToDTO(createdSalon);
         return new ResponseEntity<>(salonDTO, HttpStatus.CREATED);

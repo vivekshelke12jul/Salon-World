@@ -128,14 +128,10 @@ public class KeycloakService {
         requestBody.add("refresh_token",refreshToken);
 
         // Create HTTP entity
-        HttpEntity<MultiValueMap<String, String>> requestEntity =
-                new HttpEntity<>(requestBody, headers);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         // Send POST request
-
-
         try {
-
             ResponseEntity<TokenResponse> response = restTemplate.exchange(
                     TOKEN_URL,
                     HttpMethod.POST,
@@ -147,9 +143,7 @@ public class KeycloakService {
 
             System.err.println("Client error: " + e.getMessage());
             throw new Exception(e.getMessage());
-
         }
-
     }
 
     public KeycloakRole getRoleByName(
