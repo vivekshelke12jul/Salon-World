@@ -1,0 +1,25 @@
+
+server:
+  port: 5007
+
+spring:
+  application:
+    name: notificationMicroservice
+
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/salon_world_notification_db"
+    username: postgres
+    password: vivek
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
