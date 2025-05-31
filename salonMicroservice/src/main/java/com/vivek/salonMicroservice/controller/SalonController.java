@@ -5,6 +5,7 @@ import com.vivek.salonMicroservice.model.Salon;
 import com.vivek.salonMicroservice.payload.dto.SalonDTO;
 import com.vivek.salonMicroservice.payload.dto.UserDTO;
 import com.vivek.salonMicroservice.service.SalonService;
+import com.vivek.salonMicroservice.service.client.UserFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +21,20 @@ public class SalonController {
     @Autowired
     private SalonService salonService;
 
+    @Autowired
+    private UserFeignClient userService;
+
     @GetMapping("/hello")
     public String hello() {
         return "hello";
     }
 
     @PostMapping
-    public ResponseEntity<SalonDTO> createSalon(@RequestBody SalonDTO salon) throws Exception {
-
-        UserDTO user = new UserDTO();
-        user.setId(1);
+    public ResponseEntity<SalonDTO> createSalon(
+            @RequestBody SalonDTO salon,
+            @RequestHeader("Authorization")String jwt
+    ) throws Exception {
+        UserDTO user=userService.getUserFromJwtToken(jwt).getBody();
         Salon createdSalon = salonService.createSalon(salon,user);
         SalonDTO salonDTO= SalonMapper.mapToDTO(createdSalon);
         return new ResponseEntity<>(salonDTO, HttpStatus.CREATED);
@@ -40,7 +45,7 @@ public class SalonController {
     public ResponseEntity<SalonDTO> updateSalon(
             @PathVariable Integer salonId,
             @RequestBody Salon salon,
-            @RequestBody UserDTO user
+            @RequestHeader("Authorization")String jwt
     ) throws Exception {
 
         Salon updatedSalon = salonService.updateSalon(salonId, salon);
@@ -62,7 +67,9 @@ public class SalonController {
 
 
     @GetMapping("/{salonId}")
-    public ResponseEntity<SalonDTO> getSalonById(@PathVariable Integer salonId) throws Exception {
+    public ResponseEntity<SalonDTO> getSalonById(
+            @PathVariable Integer salonId
+    ) throws Exception {
         Salon salon = salonService.getSalonById(salonId);
         SalonDTO salonDTO=SalonMapper.mapToDTO(salon);
         return ResponseEntity.ok(salonDTO);
@@ -83,9 +90,9 @@ public class SalonController {
 
     @GetMapping("/owner")
     public ResponseEntity<Salon> getSalonByOwner(
-            @RequestHeader("Authorization")String jwt,
-            @RequestBody UserDTO user
+            @RequestHeader("Authorization")String jwt
     ) throws Exception {
+        UserDTO user=userService.getUserFromJwtToken(jwt).getBody();
         Salon salon = salonService.getSalonByOwnerId(user.getId());
         return ResponseEntity.ok(salon);
     }

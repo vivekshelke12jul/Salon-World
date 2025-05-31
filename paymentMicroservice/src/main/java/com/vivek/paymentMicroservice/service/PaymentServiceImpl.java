@@ -10,6 +10,8 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.vivek.paymentMicroservice.domain.PaymentMethod;
 import com.vivek.paymentMicroservice.domain.PaymentOrderStatus;
+import com.vivek.paymentMicroservice.messaging.BookingEventProducer;
+import com.vivek.paymentMicroservice.messaging.NotificationEventProducer;
 import com.vivek.paymentMicroservice.model.PaymentOrder;
 import com.vivek.paymentMicroservice.payload.dto.BookingDTO;
 import com.vivek.paymentMicroservice.payload.dto.UserDTO;
@@ -23,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -40,6 +41,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentOrderRepository paymentOrderRepository;
+
+    @Autowired
+    private NotificationEventProducer notificationEventProducer;
+
+    @Autowired
+    private BookingEventProducer bookingEventProducer;
 
     @Override
     public PaymentLinkResponse createOrder(
@@ -132,6 +139,12 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             // notificaion
+            notificationEventProducer.sentNotificationEvent(
+                    paymentOrder.getBookingId(),
+                    paymentOrder.getUserId(),
+                    paymentOrder.getSalonId()
+            );
+            bookingEventProducer.sentBookingUpdateEvent(paymentOrder);
 
             paymentOrder.setStatus(PaymentOrderStatus.SUCCESS);
             paymentOrderRepository.save(paymentOrder);
